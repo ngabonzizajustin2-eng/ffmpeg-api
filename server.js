@@ -32,22 +32,23 @@ app.post(
       const output = path.join("output", `video-${Date.now()}.mp4`);
 
       ffmpeg(video)
-        .input(audio)
-      
-        })
-        .on("error", (err) => {
-          console.error(err);
-          res.status(500).json({ error: err.message });
-        });
-
-    } ca.outputOptions([
-  "-loop 1",
-  "-c:v libx264",
-  "-tune stillimage",
-  "-pix_fmt yuv420p",
-  "-c:a aac",
-  "-shortest"
-])tch (err) {
+  .input(audio)
+  .outputOptions([
+    "-loop 1",
+    "-c:v libx264",
+    "-tune stillimage",
+    "-pix_fmt yuv420p",
+    "-c:a aac",
+    "-shortest"
+  ])
+  .save(output)
+  .on("end", () => {
+    res.download(output);
+  })
+  .on("error", (err) => {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  });
       res.status(500).json({ error: err.message });
     }
   }

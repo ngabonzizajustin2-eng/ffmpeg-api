@@ -33,21 +33,21 @@ app.post(
 
       ffmpeg(video)
         .input(audio)
-        .outputOptions([
-          "-c:v copy",
-          "-c:a aac",
-          "-shortest"
-        ])
-        .save(output)
-        .on("end", () => {
-          res.download(output);
+      
         })
         .on("error", (err) => {
           console.error(err);
           res.status(500).json({ error: err.message });
         });
 
-    } catch (err) {
+    } ca.outputOptions([
+  "-loop 1",
+  "-c:v libx264",
+  "-tune stillimage",
+  "-pix_fmt yuv420p",
+  "-c:a aac",
+  "-shortest"
+])tch (err) {
       res.status(500).json({ error: err.message });
     }
   }

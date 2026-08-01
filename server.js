@@ -29,26 +29,42 @@ app.post(
         fs.mkdirSync("output");
       }
 
-      const output = path.join("output", `video-${Date.now()}.mp4`);
+      const output = path.join(
+        "output",
+        `video-${Date.now()}.mp4`
+      );
 
       ffmpeg(video)
-  .input(audio)
-  .outputOptions([
-    "-loop 1",
-    "-c:v libx264",
-    "-tune stillimage",
-    "-pix_fmt yuv420p",
-    "-c:a aac",
-    "-shortest"
-  ])
-  .save(output)
-  .on("end", () => {
-    res.download(output);
-  })
-  .on("error", (err) => {
-  console.error(err);
-  res.status(500).json({ error: err.message });
-});
+        .input(audio)
+        .outputOptions([
+          "-c:v libx264",
+          "-c:a aac",
+          "-shortest",
+          "-pix_fmt yuv420p"
+        ])
+        .save(output)
+        .on("end", () => {
+          res.download(output, () => {
+            fs.unlinkSync(video);
+            fs.unlinkSync(audio);
+            fs.unlinkSync(output);
+          });
+        })
+        .on("error", (err) => {
+          console.error(err);
+          res.status(500).json({
+            error: err.message,
+          });
+        });
+
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({
+        error: err.message,
+      });
+    }
+  }
+);
 
 const PORT = process.env.PORT || 10000;
 

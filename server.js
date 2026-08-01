@@ -49,8 +49,6 @@ app.post(
   console.error(err);
   res.status(500).json({ error: err.message });
 });
-  }
-);
 
 const PORT = process.env.PORT || 10000;
 
